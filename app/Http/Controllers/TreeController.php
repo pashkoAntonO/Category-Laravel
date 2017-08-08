@@ -9,12 +9,18 @@ use Illuminate\View\View;
 class TreeController extends Controller
 {
 
-    public function main() : View
-    {
+
+    public static function Tree(){
         $category = new Category();
         $tree = $category->getTree();
 
-        return view('Tree/main')->withTree($tree);
+        return $tree;
+    }
+
+
+    public function main() : View
+    {
+        return view('Tree/main')->withTree($this->Tree());
     }
 
 }

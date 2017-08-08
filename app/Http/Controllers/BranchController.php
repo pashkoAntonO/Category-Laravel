@@ -12,10 +12,7 @@ class BranchController extends TreeController
 
     public function create() : View
     {
-        $category = new Category();
-        $tree = $category->getTree();
-
-        return view('Branch/create')->withTree($tree);
+        return view('Branch/create')->withTree(TreeController::Tree());
     }
 
     public function store(Request $request)
