@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.master')
 
 @section('title','Создание блога')
 <link rel="stylesheet" href="{{asset('css/app.css')}}">
@@ -9,5 +9,5 @@
             @include('partials.Tree.category')
         </li>
     </ul>
-    <a href="{{route('create')}}"> Создать </a>
+    <a href="{{ URL::to('create') }}"> Создать </a>
 @endsection

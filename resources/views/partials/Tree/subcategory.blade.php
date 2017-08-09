@@ -3,16 +3,16 @@
 <ul>
     <li>
 
-        <a href="{{$value->path}}">{{$value->title}}</a>
-        <a href="{{route('edit')}}?id={{$value->id}}"> Изментить </a>
+        <a href="{{ URL::to($value->path) }}">{{$value->title}}</a>
+        <a href="{{ URL::to('edit?id='.$value->id) }}"> Изментить </a>
         @include('partials.Tree.subcategory', ['tree' => $value['children']])
     </li>
 </ul>
 @else
 <ul>
     <li>
-        <a href="{{$value->path}}">{{$value->title}}</a>
-        <a href="{{route('edit')}}?id={{$value->id}}"> Изментить </a></div>
+        <a href="{{ URL::to($value->path) }}">{{$value->title}}</a>
+        <a href="{{ URL::to('edit?id='.$value->id) }}"> Изментить </a></div>
     </li>
 </ul>
 @endif

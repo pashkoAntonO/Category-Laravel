@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.master')
 
 @section('title','Создание блога')
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -28,7 +28,7 @@
 
             <select id="myParent">
                 <option></option>
-                @include('partials.Branch.mainSubBranch');
+                @include('partials.Branch.select');
 
             </select>
 

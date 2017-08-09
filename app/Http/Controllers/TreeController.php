@@ -10,17 +10,9 @@ class TreeController extends Controller
 {
 
 
-    public static function Tree(){
-        $category = new Category();
-        $tree = $category->getTree();
-
-        return $tree;
-    }
-
-
     public function main() : View
     {
-        return view('Tree/main')->withTree($this->Tree());
+        return view('Tree/main')->withTree(Category::getTree());
     }
 
 }

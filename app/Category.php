@@ -1,12 +1,11 @@
 <?php
 
 namespace App;
-
 use App\Http\Controllers\BranchController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Kalnoy\Nestedset\NodeTrait;
-use Kalnoy\Nestedset\Collection;
+
 
 class Category extends Model
 {
@@ -17,19 +16,26 @@ class Category extends Model
         return $this->belongsTo(self::class);
     }
 
+    public function selectedProducts()
+    {
+        return $this->hasMany('App\Product', 'category_id','id');
+    }
+
+
     protected $fillable = [
         'title', 'slug', 'path',
     ];
 
-    public function getTree() : Collection
+    public static function getTree() : \Illuminate\Support\Collection
     {
         $tree = Category::get()->toTree();
 
         return $tree;
     }
 
-    public function createBranch($parent_id, $title){
-        $parent = Category::findOrFail($parent_id);
+    public function createBranch($parent_id, $title) : void
+    {
+        $parent = $this->findOrFail($parent_id);
         $slug = str_slug($title, '-');
 
         $new_elem = new Category(['title' => $title, 'slug' => $slug, 'path' => $parent->path . '/'. $slug]);
@@ -37,11 +43,11 @@ class Category extends Model
         $new_elem->appendToNode($parent)->save();
     }
 
-    public function editBranch($id)
+    public function editBranch($id) : \Illuminate\Support\Collection
     {
-        $category =  Category::findOrFail($id);
+        $category =  $this->findOrFail($id);
 
-        $tree = Category::get()->toTree();
+        $tree = $this->get()->toTree();
 
         $categoryAndTree = collect(['category' => $category, 'tree' => $tree]);
 
@@ -49,10 +55,11 @@ class Category extends Model
     }
 
 
-    public function updateBranch($child_id, $parent_id, $title, $root = 'catalog'){
+    public function updateBranch($child_id, $parent_id, $title, $root = 'catalog') : void
+    {
 
-        $node = Category::findOrFail($child_id);
-        $parent = Category::findOrFail($parent_id);
+        $node = $this->findOrFail($child_id);
+        $parent = $this->findOrFail($parent_id);
 
         $node->title = $title;
         $node->slug = str_slug($title,'-');
@@ -69,34 +76,32 @@ class Category extends Model
         $node->path = $path . '/' . $node->slug;
         $node->save();
 
-        Category::pathDescendants($node, $node->path);
-
+        $this->pathDescendants($node, $node->path);
     }
 
 
-    public function searchPath($path){
+    public function searchPath($path) : \Illuminate\Support\Collection
+    {
 
-        $category = Category::where('path', '=', $path)->first();
+        $category = $this->where('path', '=', $path)->first();
 
         $navigationMenu = Category::getNavigationMenu($category);
 
         return $navigationMenu;
     }
 
-    public function getBranch($part_path){
+    public function getBranch($part_path) : \Illuminate\Support\Collection
+    {
 
         $path = 'catalog/' . $part_path;
 
-        $category = Category::where('path',$path)->first();
+        $category = $this->where('path',$path)->first();
 
-        $navigationMenu = Category::getNavigationMenu($category);
+        $navigationMenu = $this->getNavigationMenu($category);
 
+        $products = $this->find($category->id)->selectedProducts;
 
-      //  $products = DB::select("select * from products where category_id = $category->id");
-
-        $products = Product::where('category_id', $category->id)->get();
-
-        Category::descendants($category, $products);
+        $this->descendants($category, $products);
 
         $queries = collect(['products'=>$products, 'navigationMenu'=>$navigationMenu]);
 
@@ -105,7 +110,8 @@ class Category extends Model
     }
 
 
-    private function pathDescendants($parentNode, $path){
+    private function pathDescendants($parentNode, $path) : void
+    {
 
         $node = null;
         foreach ($parentNode['children'] as $value){
@@ -114,13 +120,13 @@ class Category extends Model
             $value->save();
 
             if(isset($value['children'][0])){
-                Category::pathDescendants($value, $value->path);
+                $this->pathDescendants($value, $value->path);
             }
         }
 
     }
 
-    public function getNavigationMenu($category)
+    public function getNavigationMenu($category) : \Illuminate\Support\Collection
     {
         $title = $category->ancestors()->pluck('title');
         $paths = $category->ancestors()->pluck('path');
@@ -134,17 +140,18 @@ class Category extends Model
     }
 
 
-        private function descendants($parentNode, &$products)
+        private function descendants($parentNode, &$products) : void
         {
 
-            $node = null;
             foreach ($parentNode['children'] as $node) {
-                $results = Product::where('category_id', $node->id);
+
+                $results = $this->where('category_id', $node->id);
                 foreach ($results as $res){
                     array_push($products, $res);
                 }
 
-                Category::descendants($node, $products);
+
+                $this->descendants($node, $products);
 
             }
         }
