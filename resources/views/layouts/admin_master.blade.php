@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'OnlineStore') }}</title>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -32,8 +32,11 @@
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
+
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="/">Home</a></li>
+                    <li><a href={{URL::to('/product/index')}}>Все товары</a></li>
+                    <li><a href={{URL::to('/product/create')}}>Создать товар</a></li>
                 </ul>
             </div>
 
@@ -76,7 +79,7 @@
     </nav>
 </div>
 
-    @yield('content')
+@yield('content')
 
 <!-- Scripts -->
 <script src="{{ asset('js/app.js') }}"></script>

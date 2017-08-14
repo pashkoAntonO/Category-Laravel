@@ -3,6 +3,8 @@
 namespace App;
 use App\Http\Controllers\BranchController;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Kalnoy\Nestedset\NodeTrait;
 
@@ -11,12 +13,12 @@ class Category extends Model
 {
     use NodeTrait;
 
-    public function parent()
+    public function parent() : BelongsTo
     {
         return $this->belongsTo(self::class);
     }
 
-    public function selectedProducts()
+    public function selectedProducts()  : HasMany
     {
         return $this->hasMany('App\Product', 'category_id','id');
     }

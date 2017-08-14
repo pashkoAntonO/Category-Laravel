@@ -20,6 +20,7 @@ class BranchController extends TreeController
     public function store(Request $request) : RedirectResponse
     {
         $category = new Category();
+
         $category->createBranch($request->parent_id, $request->title);
 
         return redirect('/');
@@ -29,6 +30,7 @@ class BranchController extends TreeController
     public function show(Request $request) : View
     {
         $category = new Category();
+
         $categoryCollect = $category->getBranch($request->path);
 
         return view('Branch/show')->with(['paths'=>$categoryCollect['navigationMenu']['paths'],
@@ -42,6 +44,7 @@ class BranchController extends TreeController
     public function edit(Request $request) : View
     {
         $category = new Category();
+
         $branch = $category->editBranch($request->id);
 
         return view('Branch/edit')->with(['element'=>$branch['category'], 'tree'=>$branch['tree'], 'lvl'=> 0]);
@@ -49,12 +52,8 @@ class BranchController extends TreeController
 
     public function update(Request $request) : RedirectResponse
     {
-
         $category = new Category();
-
         $category->updateBranch($request->child_id,$request->parent_id, $request->title);
-
         return redirect('/');
-
     }
 }
