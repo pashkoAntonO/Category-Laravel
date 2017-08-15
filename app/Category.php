@@ -31,7 +31,6 @@ class Category extends Model
     public static function getTree() : \Illuminate\Support\Collection
     {
         $tree = Category::get()->toTree();
-
         return $tree;
     }
 

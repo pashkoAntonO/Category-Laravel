@@ -5,7 +5,7 @@
 
 @section('content')
 
-    {!! Form::open(['route' => 'product/store','enctype'=>"multipart/form-data"] )!!}
+    {!! Form::open(['route' =>'product/store','enctype'=>"multipart/form-data"] )!!}
     {{Form::hidden('parent_id', null, ['id'=>'hidden_id'])}}
 
     <div class="form-group col-md-7">

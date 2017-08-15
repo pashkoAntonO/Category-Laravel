@@ -15,11 +15,11 @@ class Admin
      */
     public function handle($request, Closure $next)
     {
-        if (Gate::denies('product')) {
-            return redirect()->route('home');
-        }
-
-
-        return $next($request);
+//        if (Gate::denies('product')) {
+//            return redirect()->route('home');
+//        }
+//
+//
+//        return $next($request);
     }
 }

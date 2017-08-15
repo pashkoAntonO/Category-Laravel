@@ -9,7 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Category;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-
+use App\Http\Requests\ProductRequest;
 
 class ManageProductsController extends Controller
 {
@@ -18,10 +18,10 @@ class ManageProductsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : View
+    public function index()
     {
-        $product = new Product();
-        return view('Product/index')->with('products', $product->getAllProduct());
+        $all = Product::all();
+        return view('Product/index')->with('products',$all);
     }
 
     /**
@@ -29,17 +29,18 @@ class ManageProductsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() : View
+    public function create()
     {
-        return view('Product/create')->with(['tree'=> Category::getTree(), 'lvl'=>0]);
+        return view('Product/create')->with(['tree' => Category::getTree(), 'lvl' => 0]);
     }
 
 
-    public function store(Request $request) : Redirect
+    public function store(ProductRequest $request)
     {
-       $product = new Product();
-       $f =  $request->file('product')->store('/products');
-      $product->createProduct($request->title,$f,$request->price,$request->description,$request->parent_id);
+        $f = $request->file('product')->store('/products');
+
+        Product::create(['category_id'=> $request->parent_id,'title'=>$request->title, 'slug'=> str_slug($request->title, '-'),
+            'image'=>$f, 'price'=>$request->price, 'description'=>$request->description]);
 
         return redirect()->route('product/index');
     }
@@ -47,10 +48,10 @@ class ManageProductsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request) : void
+    public function show(Request $request): void
     {
 
     }
@@ -58,30 +59,32 @@ class ManageProductsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)   : View
+    public function edit($id)
     {
-        $product = new Product();
-        $currentProduct = $product->getCurrentProduct($id);
+        $currentProduct = Product::find($id);
 
-        return view('Product/edit')->with(['tree'=> Category::getTree(), 'lvl'=>0, 'currentProduct' => $currentProduct]);
+        return view('Product/edit')->with(['tree' => Category::getTree(), 'lvl' => 0, 'currentProduct' => $currentProduct]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) : Redirect
+    public function update(ProductRequest $request, $id)
     {
-        $product = new Product();
 
-        $f =  $request->file('product') ? $request->file('product')->store('products') : $request->image;
-        $product->updateProduct($id,$request->title, $f, $request->price, $request->description, $request->parent_id);
+        $f = $request->file('product') ? $request->file('product')->store('products') : $request->image;
+
+        Product::find($id)->update(['category_id'=> $request->parent_id,'title'=>$request->title,
+            'slug'=> str_slug($request->title, '-'), 'image'=>$f, 'price'=>$request->price,
+            'description'=>$request->description]);
+
 
         return redirect()->route('product/index');
     }
@@ -89,14 +92,12 @@ class ManageProductsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : Redirect
+    public function destroy($id)
     {
-        $product = new Product();
-        $product->deleteProduct($id);
-
+        Product::find($id)->delete();
         return redirect()->route('product/index');
     }
 }

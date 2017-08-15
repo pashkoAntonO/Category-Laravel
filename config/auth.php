@@ -1,5 +1,4 @@
 <?php
-
 return [
 
     /*
@@ -64,16 +63,19 @@ return [
     |
     */
 
+//    'providers' => [
+//        'users' => [
+//            'driver' => 'eloquent',
+//            'model' =>App\Models\User::class
+//        ],
+//    ],
+
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
+            'table' => 'users',
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
@@ -91,6 +93,8 @@ return [
     |
     */
 
+
+
     'passwords' => [
         'users' => [
             'provider' => 'users',
@@ -98,5 +102,4 @@ return [
             'expire' => 60,
         ],
     ],
-
 ];

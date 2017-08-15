@@ -34,6 +34,9 @@
                 </a>
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="/">Home</a></li>
+                    @role('admin')
+                    <li><a href="/admin">Admin</a></li>
+                    @endrole
                 </ul>
             </div>
 
@@ -78,7 +81,6 @@
 
     @yield('content')
 
-<!-- Scripts -->
 <script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

@@ -7,17 +7,18 @@ use Illuminate\Http\Request;
 use App\Category;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Http\Requests\CategoryRequest;
 
 
 class BranchController extends TreeController
 {
 
-    public function create() : View
+    public function create()
     {
         return view('Branch/create')->with(['tree'=> Category::getTree(), 'lvl'=>0 ]);
     }
 
-    public function store(Request $request) : RedirectResponse
+    public function store(CategoryRequest $request)
     {
         $category = new Category();
 
@@ -27,7 +28,7 @@ class BranchController extends TreeController
     }
 
 
-    public function show(Request $request) : View
+    public function show(Request $request)
     {
         $category = new Category();
 
@@ -41,16 +42,14 @@ class BranchController extends TreeController
     }
 
 
-    public function edit(Request $request) : View
+    public function edit(Request $request)
     {
         $category = new Category();
-
         $branch = $category->editBranch($request->id);
-
         return view('Branch/edit')->with(['element'=>$branch['category'], 'tree'=>$branch['tree'], 'lvl'=> 0]);
     }
 
-    public function update(Request $request) : RedirectResponse
+    public function update(CategoryRequest $request)
     {
         $category = new Category();
         $category->updateBranch($request->child_id,$request->parent_id, $request->title);
